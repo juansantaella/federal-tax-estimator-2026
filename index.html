@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Estimador preliminar del impuesto federal sobre ingresos para 2026.">
+  <title>Estimador de impuestos federales 2026</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div class="year">Tax year 2026</div>
+      <h1>Estimador de impuestos federales</h1>
+      <p>Proyecta el resultado utilizando cantidades anuales o la información acumulada de tu último paystub.</p>
+    </header>
+
+    <form id="estimator" novalidate>
+      <section class="panel">
+        <h2>Situación tributaria</h2>
+        <div class="grid two">
+          <div class="field">
+            <label for="status">Filing status</label>
+            <select id="status">
+              <option value="single">Single</option>
+              <option value="hoh">Head of Household</option>
+              <option value="mfj">Married Filing Jointly</option>
+              <option value="mfs">Married Filing Separately</option>
+              <option value="qss">Qualifying Surviving Spouse</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="hasDeps">¿Reclamarás dependientes?</label>
+            <select id="hasDeps"><option value="no">No</option><option value="yes">Sí</option></select>
+          </div>
+          <label id="hohConfirm" class="check full hidden"><input id="hohOK" type="checkbox"><span>Confirmo que tengo una qualifying person y pagué más de la mitad del costo de mantener el hogar.</span></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <div><h2>Ingresos y retención federal</h2><p>Usa federal taxable wages, generalmente la cantidad esperada en el Form W-2, Box 1.</p></div>
+        </div>
+        <div class="grid two people">
+          <div id="taxpayerBox" class="person" data-prefix="t">
+            <h3>Taxpayer</h3>
+            <div class="field">
+              <label for="tMethod">Método de entrada</label>
+              <select id="tMethod"><option value="stub">Proyectar desde el último paystub</option><option value="annual">Introducir cantidades anuales</option></select>
+            </div>
+            <div id="tStub" class="stub-fields">
+              <div class="field"><label for="tYtdWages">Federal taxable wages YTD</label><div class="money-input"><span>$</span><input id="tYtdWages" type="number" min="0" step="0.01" inputmode="decimal"></div></div>
+              <div class="field"><label for="tYtdWh">Federal income tax withheld YTD</label><div class="money-input"><span>$</span><input id="tYtdWh" type="number" min="0" step="0.01" inputmode="decimal"></div></div>
+              <div class="grid two compact">
+                <div class="field"><label for="tDate">Fecha del último pago</label><input id="tDate" type="date" min="2026-01-01" max="2026-12-31"></div>
+                <div class="field"><label for="tFreq">Frecuencia</label><select id="tFreq"><option value="52">Weekly</option><option value="26" selected>Biweekly</option><option value="24">Semimonthly</option><option value="12">Monthly</option></select></div>
+              </div>
+              <div class="field">
+                <label for="tYtdStart">¿Desde cuándo incluye ingresos este YTD?</label>
+                <select id="tYtdStart"><option value="jan1">Desde el 1 de enero de 2026</option><option value="later">Comenzó después del 1 de enero</option></select>
+              </div>
+              <div id="tLater" class="later-fields hidden">
+                <div class="field"><label for="tFirstPay">Fecha del primer pago incluido en este YTD</label><input id="tFirstPay" type="date" min="2026-01-01" max="2026-12-31"><p class="help">Utiliza la fecha del primer cheque, no la fecha en que comenzó el empleo.</p></div>
+                <div class="field"><label for="tPriorJob">¿Recibiste salarios de otro empleador anteriormente en 2026?</label><select id="tPriorJob"><option value="no">No</option><option value="yes">Sí</option></select></div>
+                <div id="tPriorFields" class="grid two compact hidden">
+                  <div class="field"><label for="tPriorWages">Wages de empleos anteriores</label><div class="money-input"><span>$</span><input id="tPriorWages" type="number" min="0" step="0.01"></div></div>
+                  <div class="field"><label for="tPriorWh">Withholding de empleos anteriores</label><div class="money-input"><span>$</span><input id="tPriorWh" type="number" min="0" step="0.01"></div></div>
+                </div>
+              </div>
+            </div>
+            <div id="tAnnual" class="annual-fields hidden">
+              <div class="field"><label for="tAnnualWages">Federal taxable wages anuales esperados</label><div class="money-input"><span>$</span><input id="tAnnualWages" type="number" min="0" step="0.01"></div></div>
+              <div class="field"><label for="tAnnualWh">Federal withholding anual esperado</label><div class="money-input"><span>$</span><input id="tAnnualWh" type="number" min="0" step="0.01"></div></div>
+            </div>
+          </div>
+
+          <div id="spouseBox" class="person hidden" data-prefix="s">
+            <h3>Spouse</h3>
+            <div class="field"><label for="sMethod">Método de entrada</label><select id="sMethod"><option value="stub">Proyectar desde el último paystub</option><option value="annual">Introducir cantidades anuales</option></select></div>
+            <div id="sStub" class="stub-fields">
+              <div class="field"><label for="sYtdWages">Federal taxable wages YTD</label><div class="money-input"><span>$</span><input id="sYtdWages" type="number" min="0" step="0.01"></div></div>
+              <div class="field"><label for="sYtdWh">Federal income tax withheld YTD</label><div class="money-input"><span>$</span><input id="sYtdWh" type="number" min="0" step="0.01"></div></div>
+              <div class="grid two compact">
+                <div class="field"><label for="sDate">Fecha del último pago</label><input id="sDate" type="date" min="2026-01-01" max="2026-12-31"></div>
+                <div class="field"><label for="sFreq">Frecuencia</label><select id="sFreq"><option value="52">Weekly</option><option value="26" selected>Biweekly</option><option value="24">Semimonthly</option><option value="12">Monthly</option></select></div>
+              </div>
+              <div class="field"><label for="sYtdStart">¿Desde cuándo incluye ingresos este YTD?</label><select id="sYtdStart"><option value="jan1">Desde el 1 de enero de 2026</option><option value="later">Comenzó después del 1 de enero</option></select></div>
+              <div id="sLater" class="later-fields hidden">
+                <div class="field"><label for="sFirstPay">Fecha del primer pago incluido en este YTD</label><input id="sFirstPay" type="date" min="2026-01-01" max="2026-12-31"><p class="help">Utiliza la fecha del primer cheque, no la fecha en que comenzó el empleo.</p></div>
+                <div class="field"><label for="sPriorJob">¿Recibió salarios de otro empleador anteriormente en 2026?</label><select id="sPriorJob"><option value="no">No</option><option value="yes">Sí</option></select></div>
+                <div id="sPriorFields" class="grid two compact hidden">
+                  <div class="field"><label for="sPriorWages">Wages de empleos anteriores</label><div class="money-input"><span>$</span><input id="sPriorWages" type="number" min="0" step="0.01"></div></div>
+                  <div class="field"><label for="sPriorWh">Withholding de empleos anteriores</label><div class="money-input"><span>$</span><input id="sPriorWh" type="number" min="0" step="0.01"></div></div>
+                </div>
+              </div>
+            </div>
+            <div id="sAnnual" class="annual-fields hidden">
+              <div class="field"><label for="sAnnualWages">Federal taxable wages anuales esperados</label><div class="money-input"><span>$</span><input id="sAnnualWages" type="number" min="0" step="0.01"></div></div>
+              <div class="field"><label for="sAnnualWh">Federal withholding anual esperado</label><div class="money-input"><span>$</span><input id="sAnnualWh" type="number" min="0" step="0.01"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="depsPanel" class="panel hidden">
+        <h2>Dependientes y qualifying children</h2>
+        <div class="grid two">
+          <div class="field"><label for="under17">Qualifying children menores de 17</label><input id="under17" type="number" value="0" min="0" max="15" step="1"></div>
+          <div class="field"><label for="age1718">Qualifying children de 17 a 18</label><input id="age1718" type="number" value="0" min="0" max="15" step="1"></div>
+          <div class="field"><label for="students">Qualifying children de 19 a 23</label><input id="students" type="number" value="0" min="0" max="15" step="1"><p class="help">Incluye únicamente estudiantes full-time durante al menos cinco meses que satisfagan las reglas del EIC.</p></div>
+          <div class="field"><label for="otherDeps">Otros dependientes que califican</label><input id="otherDeps" type="number" value="0" min="0" max="15" step="1"><p class="help">Potencial Credit for Other Dependents; no qualifying children para EIC.</p></div>
+          <div class="field"><label for="investment">Investment income esperado</label><div class="money-input"><span>$</span><input id="investment" type="number" value="0" min="0" step="0.01"></div><p class="help">El EIC no está disponible si excede $12,200 en 2026.</p></div>
+          <label id="mfsEicBox" class="check hidden"><input id="mfsEic" type="checkbox"><span>Cumplo las reglas especiales de EIC para una persona casada, separada y que no presenta conjuntamente.</span></label>
+          <label class="check full"><input id="eligibility" type="checkbox"><span>Confirmo que los dependientes satisfacen las reglas aplicables de relación, residencia, manutención, declaración conjunta e identificación.</span></label>
+        </div>
+      </section>
+
+      <section class="panel action-panel">
+        <div class="notice"><strong>Alcance de esta estimación.</strong> Supone salarios W-2, deducción estándar básica, ordinary income y ninguna otra fuente de ingreso, ajuste, itemized deduction, ganancia de capital, self-employment tax, AMT o crédito.</div>
+        <div id="error" class="error" role="alert"></div>
+        <button class="primary" type="submit">Calcular estimado de 2026</button>
+      </section>
+    </form>
+
+    <section id="results" class="panel results" aria-live="polite">
+      <div class="section-heading"><div><p class="eyebrow">Resultado proyectado</p><h2>Estimación federal de 2026</h2></div><button id="printButton" class="secondary" type="button">Imprimir</button></div>
+      <div id="headline" class="headline"><span id="resultLabel"></span><strong id="resultAmount"></strong></div>
+      <div class="cards">
+        <div class="card"><span>Projected wages</span><strong id="rWages"></strong></div>
+        <div class="card"><span>Projected withholding</span><strong id="rWh"></strong></div>
+        <div class="card"><span>Standard deduction</span><strong id="rDed"></strong></div>
+        <div class="card"><span>Taxable income</span><strong id="rTaxable"></strong></div>
+        <div class="card"><span>Tax before credits</span><strong id="rTaxBefore"></strong></div>
+        <div class="card"><span>Marginal bracket</span><strong id="rRate"></strong></div>
+      </div>
+      <div class="table-wrap"><table><tbody>
+        <tr><th>Nonrefundable CTC/ODC used</th><td id="rNonref"></td></tr>
+        <tr><th>Tax after nonrefundable credits</th><td id="rAfter"></td></tr>
+        <tr><th>Estimated ACTC</th><td id="rActc"></td></tr>
+        <tr><th>Estimated EIC</th><td id="rEic"></td></tr>
+        <tr><th>Total refundable credits</th><td id="rRefundable"></td></tr>
+      </tbody></table></div>
+      <p class="fine-print">El EIC usa una fórmula continua basada en los límites IRS de 2026. La tabla final del IRS puede diferir ligeramente por sus intervalos y redondeos. El ACTC no implementa el método especial del Social Security tax para tres o más hijos. Verifica la elegibilidad y el resultado final usando los formularios e instrucciones aplicables.</p>
+    </section>
+  </main>
+  <script src="tax2026.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
